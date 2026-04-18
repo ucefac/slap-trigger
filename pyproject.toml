@@ -1,0 +1,31 @@
+[project]
+name = "slap-trigger"
+version = "0.1.0"
+description = "Trigger keyboard events from MacBook accelerometer double-tap"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "User"}]
+dependencies = [
+    "macimu>=0.1.0",
+    "pyobjc>=10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+]
+listener = [
+    "pynput",
+]
+
+[project.scripts]
+slap-trigger = "slap_trigger.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
