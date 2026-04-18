@@ -1,0 +1,41 @@
+{
+  "detector": {
+    "threshold": 1.02,
+    "min_interval_ms": 180,
+    "max_interval_ms": 220,
+    "cooldown_ms": 1500,
+    "debounce_ms": 60
+  },
+  "actions": [
+    {
+      "name": "wetype",
+      "type": "keyboard",
+      "keys": ["option:right"],
+      "enabled": true
+    },
+    {
+      "name": "copy",
+      "type": "keyboard",
+      "keys": ["command:left", "c"],
+      "enabled": false
+    },
+    {
+      "name": "f1",
+      "type": "keyboard",
+      "keys": ["f1"],
+      "enabled": false
+    },
+    {
+      "name": "f2",
+      "type": "keyboard",
+      "keys": ["f2"],
+      "enabled": false
+    },
+    {
+      "name": "play mario",
+      "type": "cmd",
+      "cmd": ["afplay", "/Users/ucefac/Music/mario-jump.mp3"],
+      "enabled": false
+    }
+  ]
+}
