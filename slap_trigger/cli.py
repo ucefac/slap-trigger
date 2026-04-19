@@ -14,12 +14,21 @@ from slap_trigger.config import (
     Config,
     Action,
     DetectorSettings,
+    LoggingSettings,
     load_config,
     save_config,
     get_default_config,
 )
 from slap_trigger.detector import DoubleTapDetector, DetectorConfig
 from slap_trigger.keyboard import KeyboardSimulator
+from slap_trigger.logger import (
+    setup_logger,
+    get_log_level,
+    DEFAULT_LOG_DIR,
+    log_info,
+    log_error,
+    log_warning,
+)
 
 
 def run(args: argparse.Namespace) -> None:
@@ -35,6 +44,22 @@ def run(args: argparse.Namespace) -> None:
         if not args.no_init:
             save_config(config, args.config_file)
             print(f"Created default config: {args.config_file}")
+
+    # Initialize logging
+    log_dir = args.log_dir if args.log_dir else DEFAULT_LOG_DIR
+    logger = setup_logger(
+        log_dir=log_dir,
+        max_bytes=config.logging.max_bytes,
+        level=get_log_level(args.log_level or config.logging.level),
+        console=args.log_console,
+    )
+
+    log_info("=== Application started ===")
+    log_info(f"Log file: {log_dir / 'slap-trigger.log'}")
+    log_info(
+        f"Config: threshold={config.detector.threshold}g, "
+        f"interval={config.detector.min_interval_ms}-{config.detector.max_interval_ms}ms"
+    )
 
     # Show config
     print(f"Configuration:")
@@ -284,6 +309,7 @@ def init_config(args: argparse.Namespace) -> None:
     print(f"Created config file: {args.output}")
     print(f"\nEdit it to customize your triggers.")
 
+
 def create_parser() -> argparse.ArgumentParser:
     """Create argument parser."""
     parser = argparse.ArgumentParser(
@@ -331,6 +357,24 @@ Examples:
         "--no-init",
         action="store_true",
         help="Don't create default config if not found",
+    )
+
+    parser.add_argument(
+        "--log-level",
+        choices=["debug", "info", "warning", "error"],
+        help="Logging level",
+    )
+
+    parser.add_argument(
+        "--log-dir",
+        type=Path,
+        help="Log directory (default: ~/.local/share/slap-trigger/logs/)",
+    )
+
+    parser.add_argument(
+        "--log-console",
+        action="store_true",
+        help="Also print logs to console",
     )
 
     # Subcommands

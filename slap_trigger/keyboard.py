@@ -7,6 +7,8 @@ import ctypes
 import time
 from ctypes import util, CDLL
 
+from slap_trigger.logger import log_debug
+
 # Load CoreGraphics directly via ctypes (same as trigger_hotkey.py)
 _core_graphics = CDLL(util.find_library("CoreGraphics"))
 
@@ -183,7 +185,7 @@ class KeyboardSimulator:
             delay: Delay between key press and release (seconds)
         """
         self._delay = delay
-        print(f"[KeyboardSim] delay={delay}")
+        log_debug(f"KeyboardSim initialized with delay={delay}")
 
     def press_key(self, key: str) -> None:
         """Press and release a single key.

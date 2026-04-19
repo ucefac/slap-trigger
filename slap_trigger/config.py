@@ -8,6 +8,30 @@ from pathlib import Path
 
 
 @dataclass
+class LoggingSettings:
+    """Logging configuration."""
+
+    enabled: bool = True
+    max_bytes: int = 1024 * 1024  # 1MB
+    level: str = "info"  # debug, info, warning, error
+
+    def to_dict(self) -> dict:
+        return {
+            "enabled": self.enabled,
+            "max_bytes": self.max_bytes,
+            "level": self.level,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "LoggingSettings":
+        return cls(
+            enabled=data.get("enabled", True),
+            max_bytes=data.get("max_bytes", 1024 * 1024),
+            level=data.get("level", "debug"),
+        )
+
+
+@dataclass
 class DetectorSettings:
     """Detector configuration."""
 
@@ -94,21 +118,25 @@ class Config:
     """Main configuration."""
 
     detector: DetectorSettings = field(default_factory=DetectorSettings)
+    logging: LoggingSettings = field(default_factory=LoggingSettings)
     actions: list[Action] = field(default_factory=list)
 
     @classmethod
     def from_dict(cls, data: dict) -> "Config":
         detector_data = data.get("detector", {})
+        logging_data = data.get("logging", {})
         actions_data = data.get("actions", [])
 
         return cls(
             detector=DetectorSettings.from_dict(detector_data),
+            logging=LoggingSettings.from_dict(logging_data),
             actions=[Action.from_dict(a) for a in actions_data],
         )
 
     def to_dict(self) -> dict:
         return {
             "detector": self.detector.to_dict(),
+            "logging": self.logging.to_dict(),
             "actions": [a.to_dict() for a in self.actions],
         }
 
@@ -154,6 +182,7 @@ def get_default_config() -> Config:
     """Get default configuration."""
     return Config(
         detector=DetectorSettings(),
+        logging=LoggingSettings(),
         actions=[
             Action(
                 name="paste", type="keyboard", keys=["command:left", "v"], enabled=True

@@ -6,6 +6,8 @@ import math
 import time
 from dataclasses import dataclass
 
+from slap_trigger.logger import log_debug, log_info
+
 
 @dataclass
 class DetectorConfig:
@@ -81,8 +83,9 @@ class DoubleTapDetector:
             time_since_first = (
                 current_time - self._first_tap_time if self._tap_count > 0 else 0
             )
-            print(
-                f"\n[TAP] mag={magnitude:.3f} count={self._tap_count} time={current_time:.3f} interval={time_since_first * 1000:.0f}ms"
+            log_debug(
+                f"TAP: mag={magnitude:.3f} count={self._tap_count} "
+                f"interval={time_since_first * 1000:.0f}ms"
             )
             return self._handle_tap(current_time)
 
